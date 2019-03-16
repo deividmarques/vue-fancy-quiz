@@ -11,20 +11,19 @@
       <v-divider></v-divider>
       <v-card-text>
 
-        deivid
-
-        <!-- <v-container>
-          <v-form v-model="valid" ref="form">
+        <v-container>
+          <v-form ref="form" v-model="valid" lazy-validation>
             <v-layout row wrap>
               <v-flex xs12>
                 <v-textarea
                   name="input-7-1"
                   label="Mensagem simples"
-                  v-model="newData.message"
+                  v-model="message"
                   hint="Ex: Mensagem de boas vindas"
                   :rules="requiredRules"
                   ref="message"
                 ></v-textarea>
+
               </v-flex>
             </v-layout>
           </v-form>
@@ -43,7 +42,7 @@
               @click="submit"
             >Salvar</v-btn>
           </v-card-actions>
-        </v-container> -->
+        </v-container>
 
       </v-card-text>
     </v-card>
@@ -52,15 +51,6 @@
 
 <script>
   export default {
-    props: {
-      destroyed: {
-        type: Boolean,
-        default: false
-      },
-      data: {
-        type: Object
-      }
-    },
     data () {
       return {
         isShow: false,
@@ -68,9 +58,7 @@
         requiredRules: [
           v => !!v || 'Campo obrigatório'
         ],
-        newData: {
-          message: ''
-        }
+        message: ''
       }
     },
     methods: {
@@ -79,25 +67,21 @@
         this.$router.push({ name: 'Home'})
       },
       submit () {
-        this.newData = Object.assign({}, this.newData, { message: this.newData.message})
-        this.$emit('send', this.newData)
+        if (this.$refs.form.validate()) {
+          this.close()
+        }
       },
       clearFields () {
         // this.$refs.form.reset()
       },
       focusIn () {
-        this.clearFields()
-        // this.$refs.message.focus()
+        this.$nextTick(() => {
+          this.clearFields()
+          this.$refs.message.focus()
+        })
       },
       forceDestroy () {
         this.$destroy()
-      }
-    },
-    watch: {
-      destroyed (isHide) {
-        console.log('destroyed', isHide)
-        !isHide && this.focusIn()
-        isHide && this.forceDestroy()
       }
     },
     mounted () {
