@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "animejs": "^3.0.1",
+    "firebase": "^5.9.0",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",
+    "vuefire": "^1.4.5",
     "vuetify": "^1.5.5",
     "vuex": "^3.0.1"
   },

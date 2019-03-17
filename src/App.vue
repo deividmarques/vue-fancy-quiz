@@ -88,24 +88,64 @@
       <v-layout class="chat-main">
         <v-container class="py-0 px-0">
           <v-card class="elevation-0" height="100%">
+              <!-- <chat /> -->
 
-              <!-- <dynamic-list-components :ref="index" v-for="(component, index) in chat" :key="index" :data="component" />
-              <dynamic-component
-                v-if="showLastMessage"
-                :data="lastMessage"
-                @send="responseInput"
-              /> -->
-              <!-- <dynamic-list-components :ref="`output${index}`" v-for="(component, index) in components" :key="`output${index}`" :data="component.data" :type="component.type" />
-              <div class="input-area">
-                <dynamic-component
-                  v-if="lastMessage.data.input"
-                  :ref="`input${lastMessage.data.id}`"
-                  :data="lastMessage.data"
-                  :type="lastMessage.type"
-                  @send="responseInput"
-                />
-              </div> -->
-              <chat />
+            <div class="container">
+              <div class="page-header">
+                <h1>Firebase and Vue</h1>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3>Messages List</h3>
+                </div>
+                <div class="card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="message in chat" :key="message.id">
+                        <td>
+                          Type: {{ message.data.type }}</a>
+                        </td>
+                        <td>{{ message.data.message }}</td>
+                        <td>
+                          <span class="pointer"
+                                @click="removeArticle(message)">
+                            <i class="fas fa-trash"></i>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <br><br>
+
+            <div class="card">
+              <div class="card-header">Add Message</div>
+                <div class="card-body">
+                  <form id="form"
+                        class="form-inline"
+                        @submit.prevent="addArticle">
+                    <div class="form-group mb-2">
+                      <label for="title" class="sr-only">Message</label>
+                      <input id="title"
+                            type="text"
+                            class="form-control"
+                            placeholder="Message"
+                            v-model="newChat.data.message" />
+                    </div>
+                    <button class="btn btn-primary mx-sm-3 mb-2">Add</button>
+                  </form>
+                </div>
+            </div>
 
           </v-card>
         </v-container>
@@ -121,53 +161,26 @@
 // import DynamicListComponents from '@/components/view/DynamicListComponents'
 // import DynamicComponent from '@/components/view/DynamicComponent'
 import Chat from '@/components/view/Chat'
-
-let chatDefault = {
-  type: 'Message',
-  id: 0,
-  isBot: false,
-  message: '',
-  input: false,
-  options: null
-}
-
-let chat3 = {
-  type: 'Options',
-  id: 3,
-  isBot: true,
-  writing: true,
-  message: 'Podemos iniciar?',
-  input: true,
-  options: [
-    {
-      show: false,
-      label: 'Sim, quero iniciar',
-      value: true,
-      style: 'success'
-    },
-    {
-      show: false,
-      label: 'Não quero',
-      value: false,
-      style: ''
-    }
-  ]
-}
+import dbChat from './config'
 
 export default {
   name: 'App',
   components: {
     Chat
   },
+  firebase: {
+    chat: dbChat
+  },
   data () {
     return {
-      lastMessage: {},
-      showLastMessage: false,
-      chat: [],
-      modal: {
-        isOpen: false,
-        title: '',
-        type: ''
+      newMessage: '',
+      newChat: {
+        data: {
+          input: false,
+          isBot: false,
+          type: 'Message',
+          message: ''
+        }
       },
       direction: 'left',
       fab: false,
@@ -179,93 +192,28 @@ export default {
       bottom: true,
       left: false,
       transition: 'slide-y-reverse-transition',
-      defaultData: {
-        id: 0,
-        type: '',
-        isBot: true,
-        message: '',
-        input: false,
-        options: null
-      }
     }
   },
   methods: {
-    callModal (componentName, titleModal) {
-      let updateModal = {
-        isOpen: true,
-        title: titleModal
-      }
-      let setId = this.chat.length + 1
-      this.defaultData.id = setId
-      this.defaultData.type = componentName
-      this.modal = Object.assign({}, updateModal)
+    addArticle () {
+      // console.log('add', this.newChat)
+      dbChat.push(this.newChat)
+      this.resetData()
     },
-    closeModal () {
-      this.modal.isOpen = false
+    removeArticle (chat) {
+      dbChat.child(chat['.key']).remove()
     },
-    submitModal (result) {
-      this.closeModal()
-      this.$nextTick(() => {
-        this.asyncChat(result, 1000)
-        // this.asyncChat(chat3, 1000)
-        // setTimeout(() => {
-        //   this.showLastMessage = true
-        //   this.getlastMessage()
-        // }, 1500)
-      })
-    },
-    asyncChat (obj, delay) {
-      return new Promise(() => {
-        setTimeout(() => this.chat.push(obj), delay)
-      })
-    },
-    // autoScroll () {
-    //   var elem = document.querySelector('.chat-scroll')
-    //   elem.scrollTop = window.innerHeight
-    // },
-    getlastMessage () {
-      let result = this.chat.length !== 0 ? this.chat[this.chat.length - 1] : chatDefault
-      this.lastMessage = result
-    },
-    responseInput (result) {
-      console.log('responseInput', result)
-
-      switch (result.id) {
-        case 3: {
-          let asnwer = result.value ? 'Quero iniciar' : 'Não quero'
-          let response = {
-            type: 'Options',
-            isBot: false,
-            message: asnwer,
-            input: false,
-            options: null
-          }
-          this.asyncChat(response, 1000)
-          break
-        }
-      }
-    },
-    // startChat () {
-      // this.showLastMessage = true
-      // this.getlastMessage()
-      // this.asyncChat(chat1, 1000)
-      // this.asyncChat(chat2, 3000)
-      // this.asyncChat(chat3, 5000)
-      // setTimeout(() => {
-      //   this.showLastMessage = true
-      //   this.getlastMessage()
-      // }, 5200)
-    // },
-    startChat () {
-        this.showLastMessage = true
-        this.asyncChat(chat3, 1000)
-        // this.getlastMessage()
-
-      },
     createMessageComponent () {
-      // this.$router.push({ name: 'editMessage', params: { id: '1'}})
       this.$router.push({ name: 'EditMessage' })
-      // this.$router.push({ name: 'modal', params: { component: 'Message', title: 'Componente de Mensagem'} })
+    },
+    resetData () {
+      let data = {
+        input: false,
+        isBot: false,
+        type: 'Message',
+        message: ''
+      }
+      this.newChat = Object.assign({}, this.newChat, { data })
     }
   },
   watch: {
@@ -284,7 +232,6 @@ export default {
   },
   mounted () {
     console.log('mounted')
-    this.startChat()
   }
 }
 </script>
