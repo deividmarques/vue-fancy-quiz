@@ -1,11 +1,12 @@
 <template>
-  <div></div>
+  <div>
+    deivid
+  </div>
 </template>
 
 <script>
 
   export default {
-    components: {
-    }
+    components: {}
   }
 </script>

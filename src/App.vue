@@ -89,12 +89,12 @@
         <v-container class="py-0 px-0">
           <v-card class="elevation-0" height="100%">
             <v-card-text class="chat-scroll">
-              <!-- <dynamic-list-components :ref="index" v-for="(component, index) in chat" :key="index" :data="component" />
+              <dynamic-list-components :ref="index" v-for="(component, index) in chat" :key="index" :data="component" />
               <dynamic-component
                 v-if="showLastMessage"
                 :data="lastMessage"
                 @send="responseInput"
-              /> -->
+              />
             </v-card-text>
           </v-card>
         </v-container>
@@ -107,8 +107,8 @@
 <script>
 
 // import Modal from '@/components/panel/modal/Index'
-// import DynamicListComponents from '@/components/chat/DynamicListComponents'
-// import DynamicComponent from '@/components/chat/DynamicComponent'
+import DynamicListComponents from '@/components/view/DynamicListComponents'
+import DynamicComponent from '@/components/view/DynamicComponent'
 
 let chatDefault = {
   type: 'Message',
@@ -145,7 +145,7 @@ let chat3 = {
 export default {
   name: 'App',
   components: {
-    // Modal, DynamicListComponents, DynamicComponent
+    DynamicListComponents, DynamicComponent
   },
   data () {
     return {
