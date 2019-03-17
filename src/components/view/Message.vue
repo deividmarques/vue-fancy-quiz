@@ -103,12 +103,13 @@
 </script>
 
 <style lang="sass">
+  @import '../../assets/style/variables'
 
   $radius: 6px
   $heightFooter: 75px
-  $darkGray: black
-  $max-mobile: 600px
-  $action: red
+  // $darkGray: #000
+  // $max-mobile: 600px
+  // $action: #ccc
 
   .cb-message
     margin-bottom: 30px

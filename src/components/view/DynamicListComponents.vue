@@ -1,5 +1,5 @@
 <template>
-  <component :is="component" :type="type" :data="dataTransform" v-if="component" />
+  <component :is="component" :type="type" :data="dataTransform" />
 </template>
 <script>
   export default {
@@ -12,7 +12,7 @@
     },
     computed: {
       loader () {
-        let type = this.data.type
+        let type = this.type
         if (!type) {
           return null
         }

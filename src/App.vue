@@ -88,14 +88,25 @@
       <v-layout class="chat-main">
         <v-container class="py-0 px-0">
           <v-card class="elevation-0" height="100%">
-            <v-card-text class="chat-scroll">
-              <dynamic-list-components :ref="index" v-for="(component, index) in chat" :key="index" :data="component" />
+
+              <!-- <dynamic-list-components :ref="index" v-for="(component, index) in chat" :key="index" :data="component" />
               <dynamic-component
                 v-if="showLastMessage"
                 :data="lastMessage"
                 @send="responseInput"
-              />
-            </v-card-text>
+              /> -->
+              <!-- <dynamic-list-components :ref="`output${index}`" v-for="(component, index) in components" :key="`output${index}`" :data="component.data" :type="component.type" />
+              <div class="input-area">
+                <dynamic-component
+                  v-if="lastMessage.data.input"
+                  :ref="`input${lastMessage.data.id}`"
+                  :data="lastMessage.data"
+                  :type="lastMessage.type"
+                  @send="responseInput"
+                />
+              </div> -->
+              <chat />
+
           </v-card>
         </v-container>
       </v-layout>
@@ -107,8 +118,9 @@
 <script>
 
 // import Modal from '@/components/panel/modal/Index'
-import DynamicListComponents from '@/components/view/DynamicListComponents'
-import DynamicComponent from '@/components/view/DynamicComponent'
+// import DynamicListComponents from '@/components/view/DynamicListComponents'
+// import DynamicComponent from '@/components/view/DynamicComponent'
+import Chat from '@/components/view/Chat'
 
 let chatDefault = {
   type: 'Message',
@@ -145,7 +157,7 @@ let chat3 = {
 export default {
   name: 'App',
   components: {
-    DynamicListComponents, DynamicComponent
+    Chat
   },
   data () {
     return {
@@ -233,7 +245,7 @@ export default {
         }
       }
     },
-    startChat () {
+    // startChat () {
       // this.showLastMessage = true
       // this.getlastMessage()
       // this.asyncChat(chat1, 1000)
@@ -243,7 +255,13 @@ export default {
       //   this.showLastMessage = true
       //   this.getlastMessage()
       // }, 5200)
-    },
+    // },
+    startChat () {
+        this.showLastMessage = true
+        this.asyncChat(chat3, 1000)
+        // this.getlastMessage()
+
+      },
     createMessageComponent () {
       // this.$router.push({ name: 'editMessage', params: { id: '1'}})
       this.$router.push({ name: 'EditMessage' })
@@ -263,6 +281,10 @@ export default {
     left (val) {
       this.right = !val
     }
+  },
+  mounted () {
+    console.log('mounted')
+    this.startChat()
   }
 }
 </script>
