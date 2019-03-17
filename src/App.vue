@@ -88,9 +88,9 @@
       <v-layout class="chat-main">
         <v-container class="py-0 px-0">
           <v-card class="elevation-0" height="100%">
-              <!-- <chat /> -->
 
-            <div class="container">
+
+            <!-- <div class="container">
               <div class="page-header">
                 <h1>Firebase and Vue</h1>
               </div>
@@ -126,7 +126,7 @@
               </div>
             </div>
 
-            <br><br>
+            <br><br> -->
 
             <div class="card">
               <div class="card-header">Add Message</div>
@@ -146,6 +146,8 @@
                   </form>
                 </div>
             </div>
+
+             <chat :lists="chat" />
 
           </v-card>
         </v-container>

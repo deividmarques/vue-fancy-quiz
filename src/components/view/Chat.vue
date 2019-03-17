@@ -1,13 +1,12 @@
 <template>
   <v-card-text class="chat-scroll">
-    <dynamic-list-components :ref="`output${index}`" v-for="(component, index) in components" :key="`output${index}`" :data="component.data" :type="component.type" />
+    <dynamic-list-components :ref="`output${index}`" v-for="(component, index) in components" :key="`output${index}`" :data="component.data" :type="component.data.type" />
     <div class="input-area">
       <dynamic-component
         v-if="lastMessage.data.input"
         :ref="`input${lastMessage.data.id}`"
         :key="`input${lastMessage.data.id}`"
         :data="lastMessage.data"
-        :type="lastMessage.type"
         @send="responseInput"
       />
     </div>
@@ -735,6 +734,11 @@
   export default {
     // components: { DynamicListComponents, DynamicComponent, MenuHelp, ExpireInfo },
     components: { DynamicListComponents, DynamicComponent },
+    props: {
+      lists: {
+        type: Array
+      }
+    },
     data () {
       return {
         components: [],
@@ -750,19 +754,38 @@
         flowRefusal: false
       }
     },
+    watch: {
+      lists (val) {
+        if (val.length === 0) {
+          this.startChat()
+        } else {
+          let renderList = new Promise((resolve) => {
+            let list = val.map((item, index) => {
+              this.asyncChat(item, 100 * index)
+            })
+            resolve(list)
+          })
+
+          renderList.then(() => {
+            this.autoScroll()
+            this.showLastMessage = true
+          })
+        }
+      }
+    },
     computed: {
       lastMessage () {
         return this.components.length !== 0 ? this.components[this.components.length - 1] : chatDefault
       }
     },
     methods: {
-      // autoScroll () {
-      //   // var elem = document.querySelector('.chat-scroll')
-      //   var elem = document.querySelector('body')
-      //   console.log('elem', elem)
-      //   console.log('window.innerHeight', window.innerHeight)
-      //   elem.scrollTop = window.innerHeight
-      // },
+      autoScroll () {
+        // var elem = document.querySelector('.chat-scroll')
+        var elem = document.querySelector('body')
+        console.log('elem', elem)
+        console.log('window.innerHeight', window.innerHeight)
+        elem.scrollTop = window.innerHeight
+      },
       responseInput (option) {
         console.log('responseInput', option)
 
@@ -2047,7 +2070,7 @@
       asyncChat (obj, delay) {
         return new Promise(() => {
           setTimeout(() => {
-            this.setDataLocalStorage(obj)
+            // this.setDataLocalStorage(obj)
             this.components.push(obj)
           }, delay)
         })
@@ -2063,9 +2086,9 @@
         localStorage.setItem('chat', JSON.stringify(chatFiltered))
       },
       startChat () {
-        this.asyncChat(chat1, 1000)
-        this.asyncChat(chat2, 2000)
-        this.asyncChat(chat3, 4000)
+        // this.asyncChat(list[0], 1000)
+        // this.asyncChat(list[1], 2000)
+        // this.asyncChat(list[2], 4000)
       },
       restartChat () {
         this.anime({
@@ -2079,28 +2102,42 @@
         this.components = []
         this.startChat()
       },
-      checkLocalstorage () {
+      checkHasData () {
         if (!localStorage.getItem('chat')) {
           localStorage.setItem('chat', JSON.stringify([]))
         }
         setTimeout(() => {
-          if (JSON.parse(localStorage.getItem('chat')).length === 0) {
-            this.startChat()
-          } else {
-            let result = JSON.parse(localStorage.getItem('chat'))
-            localStorage.setItem('chat', JSON.stringify([]))
+          // if (JSON.parse(localStorage.getItem('chat')).length === 0) {
+          //   this.startChat()
+          // } else {
+          //   let result = JSON.parse(localStorage.getItem('chat'))
+          //   localStorage.setItem('chat', JSON.stringify([]))
 
-            let renderList = new Promise((resolve) => {
-              let list = result.map((item, index) => {
-                this.asyncChat(JSON.parse(item), 100 * index)
-              })
-              resolve(list)
-            })
+          //   let renderList = new Promise((resolve) => {
+          //     let list = result.map((item, index) => {
+          //       this.asyncChat(JSON.parse(item), 100 * index)
+          //     })
+          //     resolve(list)
+          //   })
 
-            renderList.then(() => {
-              this.showLastMessage = true
-            })
-          }
+          //   renderList.then(() => {
+          //     this.showLastMessage = true
+          //   })
+          // }
+          // if (this.lists.length === 0) {
+          //   this.startChat()
+          // } else {
+          //   let renderList = new Promise((resolve) => {
+          //   let list = this.lists.map((item, index) => {
+          //       this.asyncChat(JSON.parse(item), 100 * index)
+          //     })
+          //     resolve(list)
+          //   })
+
+          //   renderList.then(() => {
+          //     this.showLastMessage = true
+          //   })
+          // }
         }, 1000)
       },
       backToDisagree () {
@@ -2145,6 +2182,7 @@
     },
     mounted () {
       this.startChat()
+      // this.checkHasData()
       // this.checkLocalstorage()
       // localStorage.setItem('token', 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdHJhd19oYXQiLCJleHAiOjE1NDc0OTUxNzcsImlhdCI6MTU0NTA3NTk3NywiaXNzIjoic3RyYXdfaGF0IiwianRpIjoiMGU4N2UyOWMtZDg5OC00N2I5LTk4ZmItNjRkMmVlMDY2NjI4IiwibmJmIjoxNTQ1MDc1OTc2LCJzdWIiOiJhY2NvdW50OmM2NzY2Y2Q5LWU2ZDUtNGMwOC05YTMxLWE4MjNjODhmNDU2MCIsInR5cCI6ImFjY2VzcyJ9.TFBcCnZelJH6zt-i_Aqoc6GIdir_YvBbJ4L_A2nvI0f_Bvi4whplvZ9quFzS9t3qbUc4liOcwFLplrSHj6weog')
     }

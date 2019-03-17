@@ -8,7 +8,7 @@ var config = {
   projectId: 'fancy-quiz-chat',
   storageBucket: 'fancy-quiz-chat.appspot.com',
   messagingSenderId: '417263379253'
-};
+}
 
 let app = Firebase.initializeApp(config)
 let db = app.database()

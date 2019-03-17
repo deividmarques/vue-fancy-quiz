@@ -1,13 +1,13 @@
 <template>
-  <component :is="component" :type="type" @send="send" :data="data" v-if="component" />
+  <component :is="component" :type="data.type" @send="send" :data="data" v-if="component" />
 </template>
 <script>
   export default {
     name: 'dynamic-component',
-    props: ['data', 'type'],
+    props: ['data'],
     computed: {
       component () {
-        let type = this.type
+        let type = this.data.type
         return () => import(`@/components/view/${type}`)
       }
     },
