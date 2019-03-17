@@ -71,6 +71,20 @@
               <v-icon>settings</v-icon>
             </v-btn>
           </v-speed-dial>
+
+          <form id="form"
+            class="form-inline"
+            @submit.prevent="addArticle">
+            <div class="form-group mb-2">
+              <label for="title" class="sr-only">Message</label>
+              <input id="title"
+                    type="text"
+                    class="form-control"
+                    placeholder="Message"
+                    v-model="newChat.data.message" />
+            </div>
+            <button class="btn btn-primary mx-sm-3 mb-2">Add</button>
+          </form>
         </v-card>
       </v-container>
     </v-toolbar>
@@ -128,7 +142,7 @@
 
             <br><br> -->
 
-            <div class="card">
+            <!-- <div class="card">
               <div class="card-header">Add Message</div>
                 <div class="card-body">
                   <form id="form"
@@ -145,9 +159,9 @@
                     <button class="btn btn-primary mx-sm-3 mb-2">Add</button>
                   </form>
                 </div>
-            </div>
-
-             <chat :lists="chat" />
+            </div> -->
+            {{lastMessage}}
+             <chat :lists="lastMessage" />
 
           </v-card>
         </v-container>
@@ -198,7 +212,7 @@ export default {
   },
   methods: {
     addArticle () {
-      // console.log('add', this.newChat)
+      console.log('add', this.newChat)
       dbChat.push(this.newChat)
       this.resetData()
     },
@@ -216,6 +230,11 @@ export default {
         message: ''
       }
       this.newChat = Object.assign({}, this.newChat, { data })
+    }
+  },
+  computed: {
+    lastMessage () {
+      return this.chat.splice(-1)
     }
   },
   watch: {

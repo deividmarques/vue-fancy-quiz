@@ -755,22 +755,13 @@
       }
     },
     watch: {
-      lists (val) {
-        if (val.length === 0) {
-          this.startChat()
-        } else {
-          let renderList = new Promise((resolve) => {
-            let list = val.map((item, index) => {
-              this.asyncChat(item, 100 * index)
-            })
-            resolve(list)
-          })
-
-          renderList.then(() => {
-            this.autoScroll()
-            this.showLastMessage = true
-          })
-        }
+      lists (lists) {
+        console.log('lists', lists)
+        this.startChat()
+        // let last = lists.slice(-1)
+        // let data = last[0].data
+        // console.log('update', {data})
+        // this.asyncChat({data}, 2000)
       }
     },
     computed: {
@@ -2089,6 +2080,38 @@
         // this.asyncChat(list[0], 1000)
         // this.asyncChat(list[1], 2000)
         // this.asyncChat(list[2], 4000)
+
+        setTimeout(() => {
+          if (this.lists.length > 0) {
+            let renderList = new Promise((resolve) => {
+              let list = this.lists.map((item, index) => {
+                this.asyncChat(item, 100 * index)
+              })
+              resolve(list)
+            })
+
+            renderList.then(() => {
+              this.autoScroll()
+              this.showLastMessage = true
+            })
+          }
+        }, 1000)
+
+        // if (this.lists.length === 0) {
+        //   this.startChat()
+        // } else {
+        //   let renderList = new Promise((resolve) => {
+        //     let list = this.lists.map((item, index) => {
+        //       this.asyncChat(item, 100 * index)
+        //     })
+        //     resolve(list)
+        //   })
+
+        //   renderList.then(() => {
+        //     this.autoScroll()
+        //     this.showLastMessage = true
+        //   })
+        // }
       },
       restartChat () {
         this.anime({
@@ -2181,7 +2204,7 @@
       }
     },
     mounted () {
-      this.startChat()
+      // this.startChat()
       // this.checkHasData()
       // this.checkLocalstorage()
       // localStorage.setItem('token', 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJzdHJhd19oYXQiLCJleHAiOjE1NDc0OTUxNzcsImlhdCI6MTU0NTA3NTk3NywiaXNzIjoic3RyYXdfaGF0IiwianRpIjoiMGU4N2UyOWMtZDg5OC00N2I5LTk4ZmItNjRkMmVlMDY2NjI4IiwibmJmIjoxNTQ1MDc1OTc2LCJzdWIiOiJhY2NvdW50OmM2NzY2Y2Q5LWU2ZDUtNGMwOC05YTMxLWE4MjNjODhmNDU2MCIsInR5cCI6ImFjY2VzcyJ9.TFBcCnZelJH6zt-i_Aqoc6GIdir_YvBbJ4L_A2nvI0f_Bvi4whplvZ9quFzS9t3qbUc4liOcwFLplrSHj6weog')
